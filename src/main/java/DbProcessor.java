@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.logging.Logger;
 import org.postgresql.util.PSQLException;
 
@@ -59,7 +60,7 @@ public class DbProcessor {
       }
     } catch (SQLException e) {
       LOG.info("Failed to move data from database to collection");
-      return new ArrayList<Integer>();
+      return Collections.emptyList();
     }
   }
 }
