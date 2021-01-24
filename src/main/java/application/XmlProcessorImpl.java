@@ -28,7 +28,7 @@ public class XmlProcessorImpl implements XmlProcessor {
     final XMLOutputFactory factory = XMLOutputFactory.newFactory();
     try {
       XMLStreamWriter writer = factory.createXMLStreamWriter(
-          new FileOutputStream(Constants.PATH_TO_XML_FROM_TEST_TABLE),"UTF-8");
+          new FileOutputStream(Constants.PATH_TO_XML_FROM_TEST_TABLE), "UTF-8");
       writer.writeStartElement("entries");
       writer.writeCharacters("\n");
       for (Integer aDbQueryResult : collection) {
@@ -44,33 +44,25 @@ public class XmlProcessorImpl implements XmlProcessor {
       writer.writeEndElement();
       writer.writeEndDocument();
       writer.close();
-      LOG.info("File write success");
+      LOG.info(Constants.WRITE_XML_SUCCESS_MESSAGE);
     } catch (XMLStreamException | IOException e) {
-      LOG.info("File write failed");
+      LOG.info(Constants.WRITE_XML_ERROR_MESSAGE);
     }
   }
 
   public void XmlTransform(String pathToSourceXmlFile, String pathToXsltTemplateFile,
       String pathToTargetXmlFile) {
     File xsltTemplateFile = new File(pathToXsltTemplateFile);
-//    File sourceXmlFile = new File(pathToSourceXmlFile);
 
     try {
-//      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-//      DocumentBuilder documentBuilder = factory.newDocumentBuilder();
-//      Document documentFromXml = documentBuilder.parse(sourceXmlFile);
       TransformerFactory tFactory = TransformerFactory.newInstance();
-//      StreamSource styleSource = new StreamSource(xsltTemplateFile);
       Transformer transformer = tFactory.newTransformer(new StreamSource(xsltTemplateFile));
-//      transformer.setOutputProperty(OutputKeys.INDENT, "2");
-//      transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
-//      DOMSource source = new DOMSource(documentFromXml);
-//      transformer.transform(source, new StreamResult(new FileOutputStream(pathToTargetXmlFile)));
-      transformer.transform(new StreamSource(new FileInputStream(pathToSourceXmlFile))
-          , new StreamResult(new FileOutputStream(pathToTargetXmlFile)));
-      LOG.info("Transform xml success");
+      transformer.transform(
+          new StreamSource(new FileInputStream(pathToSourceXmlFile)),
+          new StreamResult(new FileOutputStream(pathToTargetXmlFile)));
+      LOG.info(Constants.TRANSFORM_XML_SUCCESS_MESSAGE);
     } catch (IOException | TransformerException e) {
-      LOG.info("Transform xml failed");
+      LOG.info(Constants.TRANSFORM_XML_ERROR_MESSAGE);
     }
   }
 
@@ -80,16 +72,16 @@ public class XmlProcessorImpl implements XmlProcessor {
 
     try {
       XMLStreamReader parser = factory.createXMLStreamReader(
-          new BufferedInputStream(new FileInputStream(sequenceXmlFilePath)),"UTF-8");
+          new BufferedInputStream(new FileInputStream(sequenceXmlFilePath)));
       while (parser.hasNext()) {
         if (parser.next() == 1 && parser.getLocalName().equals("entry")) {
           parseValuesFromXml.add(Integer.parseInt(parser.getAttributeValue(null, "field")));
         }
       }
     } catch (XMLStreamException | FileNotFoundException e) {
-      LOG.info("Parse xml failed");
+      LOG.info(Constants.PARSE_XML_ERROR_MESSAGE);
     }
-    LOG.info(" Parse xml success");
+    LOG.info(Constants.PARSE_XML_SUCCESS_MESSAGE);
     long sumResult = 0;
     for (int value : parseValuesFromXml) {
       sumResult = sumResult + value;

@@ -25,37 +25,22 @@ public class DbProcessorImpl implements DbProcessor {
   public Connection getConnectionWithProperties(String pathToPropertiesFile) {
     Connection connection = null;
     File propertyFile = new File(pathToPropertiesFile);
-    System.out.println("Create prop file from path");
-    if(!propertyFile.exists()){
-      System.out.println("File not found");
-    }
     try (InputStream inputStreamFromPropertyFile = new FileInputStream(propertyFile)) {
       Properties properties = new Properties();
       properties.load(inputStreamFromPropertyFile);
-//      Driver driver = new Driver();
-//       String driverString = properties.getProperty("jdbc.driver_class");
-//       Class<?> driverClass = Class.forName(driverString);
       Driver driver = new org.postgresql.Driver();
-       DriverManager.registerDriver(driver);
-      String url = properties.getProperty("jdbc.url");
-      String user = properties.getProperty("jdbc.user");
-      String pass = properties.getProperty("jdbc.password");
-      if (url == null){
-        throw new IllegalStateException("URL is null");
-      }
+      DriverManager.registerDriver(driver);
       connection = DriverManager.getConnection(
-          url,user,pass);
+          properties.getProperty("jdbc.url"),
+          properties.getProperty("jdbc.user"),
+          properties.getProperty("jdbc.password"));
     } catch (FileNotFoundException e) {
-      LOG.info("Property file is not found");
-      throw new IllegalStateException(e);
+      LOG.info(Constants.NOT_FOUND_PROPERTIES_FILE_EXCEPTION_MESSAGE);
     } catch (SQLException e) {
-      LOG.info("Failed to connect to database,check the settings in property file");
-      throw new IllegalStateException(e);
+      LOG.info(Constants.CONNECT_TO_DB_ERROR_MESSAGE);
     } catch (IOException e) {
-      LOG.info("Error reading from property file");
-      throw new IllegalStateException(e);
+      LOG.info(Constants.READING_PROPERTIES_FILE_ERROR_MESSAGE);
     }
-
     return connection;
   }
 
@@ -70,7 +55,6 @@ public class DbProcessorImpl implements DbProcessor {
         statement.execute(Constants.DB_TRUNCATE_QUERY);
         LOG.info("Table is truncated");
       }
-
       try (PreparedStatement preparedStatement =
           dBConnection.prepareStatement(Constants.DB_INSERT_VALUES_QUERY)) {
         for (int i = 1; i < maxValue + 1; i++) {
@@ -81,10 +65,10 @@ public class DbProcessorImpl implements DbProcessor {
           }
         }
         preparedStatement.executeBatch();
-        LOG.info("Insert data success");
+        LOG.info(Constants.SUCCESS_ADD_DATA_IN_DB_MESSAGE);
       }
     } catch (SQLException throwables) {
-      LOG.info("Insert data failed");
+      LOG.info(Constants.FAILED_ADD_DATA_IN_DB_EXCEPTION_MESSAGE);
     }
   }
 
@@ -98,11 +82,11 @@ public class DbProcessorImpl implements DbProcessor {
         while (setFromDb.next()) {
           collection.add(setFromDb.getInt(1));
         }
-        LOG.info("Data successfully moved from database to collection");
+        LOG.info(Constants.CREATE_COLLECTION_FROM_DB_SUCCESS_MESSAGE);
         return collection;
       }
     } catch (SQLException e) {
-      LOG.info("Failed to move data from database to collection");
+      LOG.info(Constants.CREATE_COLLECTION_FROM_DB_ERROR_MESSAGE);
       return Collections.emptyList();
     }
   }
