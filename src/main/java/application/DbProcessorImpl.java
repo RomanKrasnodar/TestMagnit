@@ -16,27 +16,44 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Properties;
 import java.util.logging.Logger;
+import org.postgresql.Driver;
 
-public class DbProcessorImpl implements DbProcessor{
+public class DbProcessorImpl implements DbProcessor {
 
   public static final Logger LOG = Logger.getLogger(DbProcessorImpl.class.getName());
 
   public Connection getConnectionWithProperties(String pathToPropertiesFile) {
     Connection connection = null;
     File propertyFile = new File(pathToPropertiesFile);
+    System.out.println("Create prop file from path");
+    if(!propertyFile.exists()){
+      System.out.println("File not found");
+    }
     try (InputStream inputStreamFromPropertyFile = new FileInputStream(propertyFile)) {
       Properties properties = new Properties();
       properties.load(inputStreamFromPropertyFile);
+//      Driver driver = new Driver();
+//       String driverString = properties.getProperty("jdbc.driver_class");
+//       Class<?> driverClass = Class.forName(driverString);
+      Driver driver = new org.postgresql.Driver();
+       DriverManager.registerDriver(driver);
+      String url = properties.getProperty("jdbc.url");
+      String user = properties.getProperty("jdbc.user");
+      String pass = properties.getProperty("jdbc.password");
+      if (url == null){
+        throw new IllegalStateException("URL is null");
+      }
       connection = DriverManager.getConnection(
-          properties.getProperty("jdbc.url"),
-          properties.getProperty("jdbc.user"),
-          properties.getProperty("jdbc.password"));
+          url,user,pass);
     } catch (FileNotFoundException e) {
       LOG.info("Property file is not found");
-    } catch (SQLException throwables) {
+      throw new IllegalStateException(e);
+    } catch (SQLException e) {
       LOG.info("Failed to connect to database,check the settings in property file");
+      throw new IllegalStateException(e);
     } catch (IOException e) {
       LOG.info("Error reading from property file");
+      throw new IllegalStateException(e);
     }
 
     return connection;

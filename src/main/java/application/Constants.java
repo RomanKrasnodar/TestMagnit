@@ -1,13 +1,11 @@
 package application;
 
-import java.util.logging.Logger;
-
 public final class Constants {
 
-  public static final String PATH_TO_CONNECTION_PROPERTIES_FILE = "DbConnection.properties";
+  public static final String PATH_TO_CONNECTION_PROPERTIES_FILE = "G:/GitHub/TestMagnit/src/main/resources/DbConnection.properties";
   public static final String PATH_TO_XML_FROM_TEST_TABLE = "1.xml";
   public static final String PATH_TO_XML_FROM_XSLT = "2.xml";
-  public static final String PATH_TO_XSLT_FILE = "Transformer.xsl";
+  public static final String PATH_TO_XSLT_FILE = "G:/GitHub/TestMagnit/src/main/resources/Transformer.xsl";
   public static final String INPUT_START_MESSAGE = "Please enter the final number of the sequence between 1 and 2147483647";
   public static final String INPUT_EXCEPTION_MESSAGE = "Please enter the correct value.";
   public static final String DB_CREATE_QUERY = "CREATE TABLE test (field int)";
