@@ -1,6 +1,8 @@
+package application;
+
 import java.util.Scanner;
 
-public class InputParams {
+public class ConsoleValueScanner {
 
   public static int scanInputNumber() {
     int userNumber = 0;
