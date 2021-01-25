@@ -1,0 +1,7 @@
+application\DbProcessorImpl.class
+application\XmlProcessorImpl.class
+application\ConsoleValueScanner.class
+application\XmlProcessor.class
+application\DbProcessor.class
+application\TestApplication.class
+application\Constants.class
